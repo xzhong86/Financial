@@ -31,6 +31,7 @@ class HQSinaIntf
   def initialize()
     @url_pfx = 'http://hq.sinajs.cn/list='
     build_contract_title
+    build_stock_title
   end
   def getVarText(codes)
     list = []
@@ -75,6 +76,23 @@ class HQSinaIntf
       fail "Bad code: #{code}" if code !~ /^CON_OP_/
     end
     getInfo(codes, @con_op_title)
+  end
+  def build_stock_title
+    title = %w[ name start_price yesterday_price cur_price highest_price lowest_price
+                buy_1_price sell_1_price deal_num turnover ]
+    1.upto(5) { |i|
+      title << 'buy_price_' + i.to_s
+      title << 'buy_num_' + i.to_s
+    }
+    1.upto(5) { |i|
+      title << 'sell_price_' + i.to_s
+      title << 'sell_num_' + i.to_s
+    }
+    title += %w[ date time res32 ]
+    @stock_info_title = title
+  end
+  def getStockInfo(codes)
+    getInfo(codes, @stock_info_title)
   end
 end
 
