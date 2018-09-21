@@ -38,7 +38,8 @@ end
 
 # main
 
-dir = '/home/zpzhong/work/financial/data/daily/'
+#dir = '/home/zpzhong/work/financial/data/daily/'
+dir = '/data/zpzhong/work/financial/data/daily/'
 #dir = 'data/daily/'
 file = dir + Time.new.strftime("stock_option_%Y-%m-%d_%H.yaml")
 save_con_datas(file)
