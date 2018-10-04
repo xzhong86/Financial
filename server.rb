@@ -15,6 +15,9 @@ trap 'INT' do server.shutdown end
 server.mount_proc '/' do |req, res|
   cons = getContractsThisMonth()
   out = StringIO.new
+  cons.up.map!{ |c| structuringHashData(c) }
+  cons.down.map!{ |c| structuringHashData(c) }
+  cons.etf50 = structuringHashData(cons.etf50)
   gen_main_page(out, cons)
   res.body = out.string
 end

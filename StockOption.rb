@@ -50,11 +50,14 @@ class HQSinaIntf
     vars.first[1].split(',')
   end
   def getInfo(codes, title)
-    getVarText(codes).map do |v, t|
+    res = getVarText(codes).map do |v, t|
       h = [title, t.split(',')].transpose.to_h
       h['js_var_name'] = v
       h
     end
+    return res[0] if res.size == 1
+    return nil if res.size == 0
+    res
   end
   def build_contract_title
      title = %w[ res0 res1 price res3 res4 hold_num gain
@@ -97,7 +100,7 @@ class HQSinaIntf
 end
 
 class XLStockOptionInfo
-  attr_reader :avail_month
+  attr_reader :avail_month, :hq
   def initialize()
     stockinfo_url = 'http://stock.finance.sina.com.cn/futures/api/openapi.php/StockOptionService.getStockName'
     js = JSON.load(open(stockinfo_url))
@@ -123,7 +126,17 @@ def getContractsThisMonth()
   cons = xlso.getMonthContracts(xlso.avail_month.first)
   cons.up = xlso.getContractDetail(cons.up)
   cons.down = xlso.getContractDetail(cons.down)
+  cons.etf50 = xlso.hq.getStockInfo('sh510050')
   cons
+end
+
+def structuringHashData(hash)
+  hash.each_pair do |key, value|
+    if value.kind_of? String and value =~ /^[\d.]+$/
+      hash[key] = value.to_f
+    end
+  end
+  OpenStruct.new(hash)
 end
 
 # main
